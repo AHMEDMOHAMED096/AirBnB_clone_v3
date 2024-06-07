@@ -155,8 +155,8 @@ No known bugs at this time.
 
 ## Authors
 Ahmed Mohamed - [Github](https://github.com/AHMEDMOHAMED096) / [Twitter](https://x.com/Ahm3dMarei)  
-Abdallah Yassin - [Github]() / [Twitter]()
+Abdallah Fattah - [Github](https://github.com/abdallhfattah) / [Twitter]()
 
-Second part of Airbnb: Joann Vuong
+Third part of Airbnb
 ## License
 Public Domain. No copy write protection. 

@@ -3,24 +3,17 @@
 Contains the TestDBStorageDocs and TestDBStorage classes
 """
 
-from datetime import datetime
 import inspect
-import models
 from models.engine import db_storage
 from models.amenity import Amenity
-from models.base_model import BaseModel
 from models.city import City
-from models.place import Place
 from models.review import Review
 from models.state import State
 from models.user import User
-import json
 import os
 import pep8
 import unittest
 DBStorage = db_storage.DBStorage
-classes = {"Amenity": Amenity, "City": City, "Place": Place,
-           "Review": Review, "State": State, "User": User}
 
 
 class TestDBStorageDocs(unittest.TestCase):
@@ -68,21 +61,102 @@ test_db_storage.py'])
                             "{:s} method needs a docstring".format(func[0]))
 
 
-class TestFileStorage(unittest.TestCase):
-    """Test the FileStorage class"""
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_all_returns_dict(self):
-        """Test that all returns a dictionaty"""
-        self.assertIs(type(models.storage.all()), dict)
+class TestDBStorage(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        """ Set up the test database """
+        os.environ['HBNB_ENV'] = 'dev'
+        os.environ['HBNB_MYSQL_USER'] = 'hbnb_dev'
+        os.environ['HBNB_MYSQL_PWD'] = 'hbnb_dev_pwd'
+        os.environ['HBNB_MYSQL_HOST'] = 'localhost'
+        os.environ['HBNB_MYSQL_DB'] = 'hbnb_dev_db'
+        cls.storage = DBStorage()
+        cls.storage.reload()
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_all_no_class(self):
-        """Test that all returns all rows when no class is passed"""
+    @classmethod
+    def tearDownClass(cls):
+        """ Closes session after all tests """
+        cls.storage.close()
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_new(self):
-        """test that new adds an object to the database"""
+    def setUp(self):
+        """ Reloads database before each test """
+        self.storage.reload()
 
-    @unittest.skipIf(models.storage_t != 'db', "not testing db storage")
-    def test_save(self):
-        """Test that save properly saves objects to file.json"""
+    def test_all(self):
+        """ Test all method """
+        test_user = User()
+        test_city = City()
+
+        self.storage.new(test_user)
+        self.storage.new(test_city)
+        self.storage.save()
+
+        all_objs = self.storage.all()
+        self.assertIn(test_user.id, all_objs)
+        self.assertIn(test_city.id, all_objs)
+
+        all_users = self.storage.all(User)
+        self.assertIn(test_user.id, all_users)
+        self.assertNotIn(test_city.id, all_users)
+
+    def test_new_save_delete(self):
+        """ Test the new, save, and delete methods """
+        new_amenity = Amenity(name="Test Amenity")
+        self.storage.new(new_amenity)
+        self.storage.save()
+
+        retrieved_amenity = self.storage.get(Amenity, new_amenity.id)
+        self.assertEqual(retrieved_amenity, new_amenity)
+
+        self.storage.delete(new_amenity)
+        self.storage.save()
+        deleted_amenity = self.storage.get(Amenity, new_amenity.id)
+        self.assertIsNone(deleted_amenity)
+
+    def test_reload(self):
+        """ Test reload method """
+        new_state = State(name="Test State")
+        self.storage.new(new_state)
+        self.storage.save()
+
+        retrieved_state = self.storage.get(State, new_state.id)
+        self.assertEqual(retrieved_state, new_state)
+
+        self.storage.reload()
+        reloaded_state = self.storage.get(State, new_state.id)
+        self.assertEqual(reloaded_state, new_state)
+
+    def test_close(self):
+        """ Test close method """
+        self.storage.close()
+        with self.assertRaises(Exception):
+            self.storage.get(State, "any_id")
+
+    def test_get(self):
+        """ Test get method """
+        new_review = Review(text="Test Review")
+        self.storage.new(new_review)
+        self.storage.save()
+
+        retrieved_review = self.storage.get(Review, new_review.id)
+        self.assertEqual(retrieved_review, new_review)
+
+    def test_count(self):
+        """ Test count method """
+        test_user_1 = User()
+        test_user_2 = User()
+        self.storage.new(test_user_1)
+        self.storage.new(test_user_2)
+        self.storage.save()
+
+        all_count = self.storage.count()
+        self.assertEqual(all_count, 2)
+
+        user_count = self.storage.count(User)
+        self.assertEqual(user_count, 2)
+        amenity_count = self.storage.count(Amenity)
+        self.assertEqual(amenity_count, 0)
+
+
+if __name__ == '__main__':
+    unittest.main()

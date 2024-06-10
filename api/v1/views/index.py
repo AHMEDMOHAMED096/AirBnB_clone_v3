@@ -10,7 +10,7 @@ def get_status():
     return jsonify({"status": "OK"})
 
 
-@app_views.route("/api/v1/stats")
+@app_views.route("/stats")
 def get_stats():
     """Returns stats"""
     from models import storage

@@ -14,7 +14,6 @@ def get_status():
 def get_stats():
     """Returns stats"""
     from models import storage
-<<<<<<< HEAD
     from models.amenity import Amenity
     from models.city import City
     from models.place import Place
@@ -30,6 +29,3 @@ def get_stats():
         'users': storage.count(User)
     }
     return jsonify(classes)
-=======
-    return storage.count()
->>>>>>> 8eb38ba (Revert "fix get_stats")

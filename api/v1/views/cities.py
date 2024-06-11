@@ -12,6 +12,7 @@ from models.state import State
 
 
 @app_views.route('/states/<state_id>/cities', methods=['GET'])
+@app_views.route('/states/<state_id>/cities/', methods=['GET'])
 def list_cities_of_state(state_id):
     '''Retrieves a list of all City objects'''
     all_states = storage.all("State").values()
@@ -24,6 +25,7 @@ def list_cities_of_state(state_id):
 
 
 @app_views.route('/states/<state_id>/cities', methods=['POST'])
+@app_views.route('/states/<state_id>/cities/', methods=['POST'])
 def create_city(state_id):
     '''Creates a City'''
     if not request.get_json():

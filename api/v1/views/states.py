@@ -12,6 +12,8 @@ def list_states():
     """Retrieves a list of all State objects"""
     list_states = [obj.to_dict() for obj in storage.all("State").values()]
     return jsonify(list_states)
+
+
 @app_views.route('/states/<state_id>', methods=['GET'])
 def get_state(state_id):
     """Retrieves a State object"""
@@ -29,11 +31,13 @@ def delete_state(state_id):
     state_obj = [obj.to_dict() for obj in all_states if obj.id == state_id]
     if state_obj == []:
         abort(404)
+    state_obj.remove(state_obj[0])
     for obj in all_states:
         if obj.id == state_id:
             storage.delete(obj)
             storage.save()
     return jsonify({}), 200
+
 
 @app_views.route('/states/', methods=['POST'])
 def create_state():

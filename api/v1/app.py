@@ -16,6 +16,7 @@ def close_session(exception=None):
     from models import storage
     storage.close()
 
+
 @app.errorhandler(404)
 def not_found(error):
     """ handles 404 error and gives json formatted response """

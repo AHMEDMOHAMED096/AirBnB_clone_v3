@@ -87,12 +87,22 @@ def updates_place(place_id):
         abort(404)
     if not request.get_json():
         abort(400, 'Not a JSON')
-    
-    attributes = ['name' , 'description' ,  'number_rooms' , 'number_bathrooms' ,'max_guest' , 'price_by_night' , 'latitude' , 'longitude']
-    for atr in attributes:
-        if atr in request.get_json():
-            place_obj[0][atr] = request.json[atr]
-
+    if 'name' in request.get_json():
+        place_obj[0]['name'] = request.json['name']
+    if 'description' in request.get_json():
+        place_obj[0]['description'] = request.json['description']
+    if 'number_rooms' in request.get_json():
+        place_obj[0]['number_rooms'] = request.json['number_rooms']
+    if 'number_bathrooms' in request.get_json():
+        place_obj[0]['number_bathrooms'] = request.json['number_bathrooms']
+    if 'max_guest' in request.get_json():
+        place_obj[0]['max_guest'] = request.json['max_guest']
+    if 'price_by_night' in request.get_json():
+        place_obj[0]['price_by_night'] = request.json['price_by_night']
+    if 'latitude' in request.get_json():
+        place_obj[0]['latitude'] = request.json['latitude']
+    if 'longitude' in request.get_json():
+        place_obj[0]['longitude'] = request.json['longitude']
     for obj in all_places:
         if obj.id == place_id:
             if 'name' in request.get_json():

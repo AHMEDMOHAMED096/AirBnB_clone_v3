@@ -70,6 +70,14 @@ def updates_user(user_id):
         abort(404)
     if not request.get_json():
         abort(400, 'Not a JSON')
+    try:
+        user_obj[0]['first_name'] = request.json['first_name']
+    except:
+        pass
+    try:
+        user_obj[0]['last_name'] = request.json['last_name']
+    except:
+        pass
     for obj in all_users:
         if obj.id == user_id:
             try:
